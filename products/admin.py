@@ -1,20 +1,28 @@
 from django.contrib import admin
-from .models import Product, Photo, Rate, OrderOption, OrderProduct, Category, Option
+from .models import Product, Photo, Rate, SpecificationName, OrderProduct, Category, Specification
 
 admin.site.register(Photo)
 admin.site.register(Rate)
 admin.site.register(OrderProduct)
-admin.site.register(OrderOption)
+admin.site.register(SpecificationName)
 admin.site.register(Category)
-admin.site.register(Option)
+admin.site.register(Specification)
 
 
 class PhotoInline(admin.TabularInline):
     model = Photo
 
 
+class RateInline(admin.TabularInline):
+    model = Rate
+
+
+# class SpecificationInline(admin.TabularInline):
+#     model = Specification
+
+
 class ProductAdmin(admin.ModelAdmin):
-    inlines = [PhotoInline, ]
+    inlines = [PhotoInline, RateInline]
 
 
 admin.site.register(Product, ProductAdmin)

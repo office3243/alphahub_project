@@ -15,14 +15,16 @@ class Rate(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     quantity = models.PositiveSmallIntegerField(default=1)
     unit_name = models.CharField(max_length=32, default="Pieces")
+    product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     def __str__(self):
         return "{} {} for {} Rupees".format(self.amount, self.unit_name, self.quantity)
 
 
-class Option(models.Model):
+class SpecificationName(models.Model):
     name = models.CharField(max_length=64)
     unit = models.CharField(max_length=32)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -48,13 +50,10 @@ class Photo(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=128)
     headline = models.CharField(max_length=264, blank=True)
-    rates = models.ManyToManyField(Rate)
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-
-    options = models.ManyToManyField(Option)
 
     def __str__(self):
         return self.name
@@ -76,17 +75,17 @@ class Product(models.Model):
         return self.photo_set.filter(is_base_photo=True).order_by("preference").first()
 
 
-class OrderOption(models.Model):
-    option = models.ForeignKey(Option, on_delete=models.PROTECT)
+class Specification(models.Model):
+    specification_name = models.ForeignKey(SpecificationName, on_delete=models.PROTECT)
     value = models.CharField(max_length=128)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} = {}".format(self.option.name, self.value)
+        return "{} = {}".format(self.specification_name.name, self.value)
 
 
 class OrderProduct(models.Model):
     product = models.ForeignKey(Product, models.PROTECT)
-    order_options = models.ManyToManyField(OrderOption)
     rate = models.ForeignKey(Rate, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     amount = models.DecimalField(max_digits=7, decimal_places=2)
