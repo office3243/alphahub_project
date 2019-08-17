@@ -6,7 +6,7 @@ class Order(models.Model):
     ORDER_STATUS_CHOICES = (("PL", "Placed"), ("PR", "Process"), ("SH", "Shipped"), ("CN", "Cancelled"))
 
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    order_product = models.ForeignKey("products.OrderProduct", on_delete=models.CASCADE)
+    items = models.ManyToManyField("carts_app.CartItem")
     address = models.ForeignKey("Address", on_delete=models.PROTECT)
     shipping_charges = models.DecimalField(max_digits=7, decimal_places=2)
     other_charges = models.DecimalField(max_digits=7, decimal_places=2)
