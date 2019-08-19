@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "products",
     "portal",
     "carts_app",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -87,6 +88,12 @@ USE_L10N = True
 USE_TZ = False
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 #   CUSTOM SETTINGS
 AUTH_USER_MODEL = 'accounts.User'

@@ -1,25 +1,87 @@
 {% extends "portal/base.html" %}
-{% block title %}Register{% endblock %}
+{% load static %}
+{% block title %}{{ product.get_display_text }}{% endblock %}
+{% block extrahead %}
+    <script src="{% static "portal/js/imagezoom.js" %}"></script>
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function() {
+          $('.flexslider').flexslider({
+            animation: "slide",
+            controlNav: "thumbnails"
+          });
+        });
+</script>
+    <script defer src="{% static "portal/js/jquery.flexslider.js" %}"></script>
+    <link rel="stylesheet" href="{% static "portal/css/flexslider.css" %}" type="text/css" media="screen" />
+
+{% endblock %}
+
 
 {% block content %}
-    <!--sign in start here-->
-    <div class="signin">
-        <div class="container">
-            <div class="signin-main">
-                <h1>Sign up</h1>
-                <h2>Informations</h2>
-                <form>
-                    <input type="text" placeholder="Username">
-                    <input type="text" class="no-margin" placeholder="E-mail">
-                    <input type="password" placeholder="Password" required=""/>
-                    <input type="password" class="no-margin" placeholder="Confirm Password" required=""/>
-                    <span class="checkbox1">
-                     <label class="checkbox"><input type="checkbox" name="" checked=""><i> </i>i agree terms of use and privacy</label>
-                   </span>
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
-        </div>
+
+    <!--single start here-->
+    <div class="single">
+       <div class="container">
+         <div class="single-main">
+            <div class="single-top-main">
+                <div class="col-md-5 single-top">
+                   <div class="flexslider">
+                      <ul class="slides">
+                         {% for photo in product.get_photos %}
+                            <li data-thumb="{{ photo.get_photo_url }}">
+                                <div class="thumb-image"> <img src="{{ photo.get_photo_url }}" data-imagezoom="true" class="img-responsive"> </div>
+                            </li>
+                         {% endfor %}
+                      </ul>
+                </div>
+                </div>
+                <div class="col-md-7 single-top-left simpleCart_shelfItem">
+                    <h2>{{ product.category.name }}</h2>
+                    <h1>{{ product.get_display_text }}</h1>
+                    {% for spec in product.get_specifications %}
+                        <h4>{{ spec.name }} : {{ spec.value }}</h4>
+                    {% endfor %}
+                    <h6 class="item_price">{{ product.get_display_price }} Per Piece</h6>
+                    <p>{{ product.extra_info }}</p>
+                    <h4>Size Charts</h4>
+                    <ul class="bann-btns">
+                        <li><select class="bann-size">
+                            <option value="select your location">Size</option>
+                            <option value="saab">Small</option>
+                            <option value="fiat">Medium</option>
+                            <option value="audi">Large</option>
+                        </select>
+                        </li>
+                        <li><a href="#" class="item_add">Add To Cart</a></li>
+                    </ul>
+                </div>
+               <div class="clearfix"> </div>
+           </div>
+           <div class="singlepage-product">
+
+               {% for photo in product.get_photos %}
+                   <div class="col-md-3 home-grid">
+                        <div class="home-product-main">
+                           <div class="home-product-top">
+                              <a href="#"><img src="{{ photo.get_photo_url }}" alt="" class="img-responsive zoom-img"></a>
+                           </div>
+                            <div class="home-product-bottom">
+                                    <h3><a href="#">Smart Shopping</a></h3>
+                                    <p>Explore Now</p>
+                            </div>
+                            <div class="srch">
+                                <span>$200</span>
+                            </div>
+                        </div>
+                   </div>
+               {% endfor %}
+
+              <div class="clearfix"> </div>
+           </div>
+         </div>
+       </div>
     </div>
-    <!-- sign in ends here -->
+    <!--single end here-->
+
 {% endblock %}

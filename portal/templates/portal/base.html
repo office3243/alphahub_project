@@ -3,13 +3,13 @@
 <html>
 <head>
     {% block full_title %}<title>{% block title %}{% endblock %} - Alphahub</title>{% endblock %}
+
+
     <link href="{% static "portal/css/bootstrap.css" %}" rel="stylesheet" type="text/css" media="all">
     <script src="{% static "portal/js/jquery-1.11.0.min.js" %}"></script>
     <link href="{% static "portal/css/style.css" %}" rel="stylesheet" type="text/css" media="all"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="keywords" content="Shoplist Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
-    Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
     <link href='//fonts.googleapis.com/css?family=Hind:400,500,300,600,700' rel='stylesheet' type='text/css'>
     <link href='//fonts.googleapis.com/css?family=Oswald:400,700,300' rel='stylesheet' type='text/css'>
@@ -25,6 +25,9 @@
     </script>
     <script src="{% static "portal/js/simpleCart.min.js" %}"> </script>
     <script src="{% static "portal/js/bootstrap.min.js" %}"></script>
+    {% block extrahead %}
+    {% endblock %}
+
 </head>
 <body>
     <!-- header start here -->

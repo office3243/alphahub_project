@@ -1,5 +1,6 @@
 django==2.2
 pillow
+django-filter
 
 backports.shutil-get-terminal-size==1.0.0
 decorator==4.0.10
