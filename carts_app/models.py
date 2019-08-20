@@ -1,62 +1,61 @@
 from django.db import models
 from django.db.models.signals import post_save
+from products.validators import validate_nonzero
+from django.core.validators import ValidationError
+from django.shortcuts import get_list_or_404
+from django.http import Http404
+import uuid
 
 
 class Cart(models.Model):
 
-    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    session_id = models.CharField(max_length=32, blank=True)
-
-    items = models.ManyToManyField("CartItem")
-
+    user = models.OneToOneField("accounts.User", on_delete=models.CASCADE)
+    uuid = models.UUIDField(default=uuid.uuid4)
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.get_display_text if self.user else self.session_id
+        return self.user.get_display_text if self.user else self.uuid
 
 
 class CartItem(models.Model):
     product = models.ForeignKey("products.Product", models.PROTECT)
-    rate = models.ForeignKey("products.Rate", on_delete=models.PROTECT, blank=True)
-    quantity = models.PositiveSmallIntegerField(default=1)
+    rate = models.ForeignKey("products.Rate", on_delete=models.PROTECT, blank=True, null=True)
+    quantity = models.PositiveSmallIntegerField(default=1, validators=[validate_nonzero])
     amount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
 
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+
     def __str__(self):
-        return "{} * {} * {} = {}".format(self.product.get_display_text, self.quantity, self.rate.amount, self.amount)
+        return "{} - {} X {} = {}".format(self.product.get_display_text, self.rate.amount, self.quantity, self.amount)
+
+    def clean(self):
+        if self.product.category.is_rate_qty:
+            allowed_quantities = self.product.rate_set.order_by("quantity").values_list("quantity", flat=True)
+            if self.quantity not in allowed_quantities:
+                raise ValidationError(
+                    "Quantity Not Allowed"
+                )
+        else:
+            qty = self.product.rate_set.order_by("quantity").first().quantity
+            if self.quantity < qty:
+                raise ValidationError(
+                    "Minimum allowed quantity is {}".format(qty)
+                )
 
     def save(self, *args, **kwargs):
-        rate = self.product.rate_set.filter(quantity__lte=1000).order_by("-quantity").first()
-        if not hasattr(self, "rate") or self.rate != rate:
-            print(rate)
-            self.rate = rate
-            super().save()
-        # amount = self.rate.get_per_piece_price * self.quantity
-        # if self.amount != amount:
-        #     self.amount = amount
-        #     super().save()
-        # super().save()
+        if hasattr(self, "rate"):
+            amount = self.quantity * self.rate.per_piece_amount
+            print(amount)
+            if self.amount != amount:
+                self.amount = amount
+                super().save()
 
-#     def assign_rate(self, *args, **kwargs):
-#         rate = self.product.rate_set.filter(quantity__lte=1000).order_by("-quantity").first()
-#         if not hasattr(self, "rate") or self.rate != rate:
-#             print(rate)
-#             self.rate = rate
-#             self.save()
-#
-#     def assign_amount(self, *args, **kwargs):
-#         amount = self.rate.get_per_piece_price * self.quantity
-#         if self.amount != amount:
-#             self.amount = amount
-#             self.save()
-#
-#
-# def valid_item(sender, instance, *args, **kwargs):
-#     if not instance.rate:
-#         instance.assign_rate()
-#         instance.save()
-#     amount = instance.amount
-#     if instance.amount != amount:
-#         instance.assign_amount()
-#
-#
-# post_save.connect(valid_item, sender=CartItem)
+
+def assign_rate(sender, instance, *args, **kwargs):
+    rate = instance.product.rate_set.filter(quantity__lte=instance.quantity).order_by("-quantity").first()
+    if not hasattr(instance, "rate") or instance.rate != rate:
+        instance.rate = rate
+        instance.save()
+
+
+post_save.connect(assign_rate, sender=CartItem)

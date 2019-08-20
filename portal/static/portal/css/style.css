@@ -283,7 +283,7 @@ a.item_add {
 /*--banner strat here--*/
 .banner {
     min-height: 620px;
-    background:rgba(209, 72, 37, 0.26);
+    background: #0eb493;
 }
 .banner-main {
     padding:4em 0em 3em 0em;

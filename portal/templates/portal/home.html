@@ -14,12 +14,12 @@
 			</div>
 			<div class="col-md-6 banner-right simpleCart_shelfItem">
 				<span class="bann-heart"> </span>
-				<h1>Alphahub</h1>
+				<h1 style="color: white">Alphahub</h1>
                 <h2>Cards Printing Service.</h2>
                 <br>
 				<h5 class="item_price">$200.00</h5>
 				<ul class="bann-small-img">
-					<li><a href="single.html"><img src="{% static "portal/images/b1.jpg" %}"></a></li>
+					<li><a href="single.html"><img src="{% static "portal/images/b2.jpg" %}"></a></li>
 					<li><a href="single.html"><img src="{% static "portal/images/b2.jpg" %}"></a></li>
 				</ul>
 				<h6>Size Charts</h6>
@@ -40,22 +40,37 @@
 </div>
     <!--banner end here-->
 
-    <!--block-layer2 start here-->
-    <div class="blc-layer2">
+    <!--home-block start here-->
+    <div class="home-block">
 	<div class="container">
-		<div class="blc-layer2-main">
-			 <div class="col-md-6 blc-layer2-left">
-			 	  <h3>voluptatem sequi nesciunt.</h3>
-			 	  <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system.</p>
-			 </div>
-			 <div class="col-md-6 blc-layer2-right">
+        <h2 class="text-center">All Categories</h2>
+        <br>
+		<div class="home-block-main">
+            {% for category in categories %}
+                {% if category.product_set.all.exists %}
+                    <div class="col-md-3 home-grid">
+                        <div class="home-product-main">
+                           <div class="home-product-top">
+                              <a href="{{ category.get_absolute_url }}"><img src="{{ category.product_set.first.get_base_photo.get_photo_url }}" alt="" class="img-responsive zoom-img"></a>
+                           </div>
+                            <div class="home-product-bottom">
+                                    <h3><a href="{{ category.get_absolute_url }}">{{ category.get_display_text }}</a></h3>
+                                    <p>Explore Now</p>
+                            </div>
+                            <div class="srch">
+                                <span>{{ category.product_set.all.count }} Items</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
 
-			 </div>
 			<div class="clearfix"> </div>
 		</div>
 	</div>
 </div>
-    <!--block-layer2 end here-->
+    <!--home block end here-->
+
 
     <!--block-layer1 start here-->
     <div class="blc-layer3">
@@ -110,70 +125,5 @@
 </div>
     <!--block-layer1 end here-->
 
-    <!--home-block start here-->
-    <div class="home-block">
-	<div class="container">
-		<div class="home-block-main">
-			<div class="col-md-3 home-grid">
-				<div class="home-product-main">
-				   <div class="home-product-top">
-				      <a href="product.html"><img src="{% static "portal/images/h1.jpg" %}" alt="" class="img-responsive zoom-img"></a>
-				   </div>
-					<div class="home-product-bottom">
-							<h3><a href="single.html">Smart Shopping</a></h3>
-							<p>Explore Now</p>
-					</div>
-					<div class="srch">
-						<span>$200</span>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 home-grid">
-				<div class="home-product-main">
-				   <div class="home-product-top">
-				      <a href="product.html"><img src="{% static "portal/images/h2.jpg" %}" alt="" class="img-responsive zoom-img"></a>
-				   </div>
-					<div class="home-product-bottom">
-							<h3><a href="single.html">Smart Shopping</a></h3>
-							<p>Explore Now</p>
-					</div>
-					<div class="srch">
-						<span>$250</span>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 home-grid">
-				<div class="home-product-main">
-				   <div class="home-product-top">
-				      <a href="product.html"><img src="{% static "portal/images/h3.jpg" %}" alt="" class="img-responsive zoom-img"></a>
-				   </div>
-					<div class="home-product-bottom">
-							<h3><a href="single.html">Smart Shopping</a></h3>
-							<p>Explore Now</p>
-					</div>
-					<div class="srch">
-						<span>$150</span>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-3 home-grid">
-				<div class="home-product-main">
-				   <div class="home-product-top">
-				      <a href="product.html"><img src="{% static "portal/images/h4.jpg" %}" alt="" class="img-responsive zoom-img"></a>
-				   </div>
-					<div class="home-product-bottom">
-							<h3><a href="single.html">Smart Shopping</a></h3>
-							<p>Explore Now</p>
-					</div>
-					<div class="srch">
-						<span>$200</span>
-					</div>
-				</div>
-			</div>
-			<div class="clearfix"> </div>
-		</div>
-	</div>
-</div>
-    <!--home block end here-->
 
 {% endblock %}

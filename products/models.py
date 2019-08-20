@@ -3,10 +3,12 @@ from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.db.models.signals import post_save
 from django.urls import reverse_lazy
+from products.validators import validate_nonzero
 
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
+    is_rate_qty = models.BooleanField(verbose_name="Allow only rate quantities", default=False)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -14,16 +16,24 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def get_display_text(self):
+        return self.name.title()
+
+    @property
+    def get_absolute_url(self):
+        return reverse_lazy("products:category_products_list", kwargs={"id": self.id})
+
 
 class Rate(models.Model):
+    quantity = models.PositiveSmallIntegerField(default=1, validators=[validate_nonzero, ])
     amount = models.DecimalField(max_digits=7, decimal_places=2)
-    quantity = models.PositiveSmallIntegerField(default=1)
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
 
     per_piece_amount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return "{} for {} Rupees".format(self.amount, self.quantity)
+        return "{} Rs for {} Pieces".format(self.amount, self.quantity)
 
     @property
     def get_per_piece_price(self):

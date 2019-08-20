@@ -1,21 +1,20 @@
 {% load static %}
+{% load portal_tags %}
 <div class="footer">
     <div class="container">
     <div class="footer-main">
         <div class="ftr-grids-block">
             <div class="col-md-3 footer-grid">
                 <ul>
-                    <li><a href="product.html">Accessories</a></li>
-                    <li><a href="product.html">Hand bags</a></li>
-                    <li><a href="product.html">Clothing</a></li>
-                    <li><a href="product.html">Brands</a></li>
-                    <li><a href="product.html">Watches</a></li>
+                    <li><a href="{% get_category_url_by_name_contains "visiting card" %}">Visiting Cards</a></li>
+                    <li><a href="{% get_category_url_by_name_contains "pen" %}">Pens</a></li>
+                    <li><a href="{% get_category_url_by_name_contains "identity card" %}">Identity Cards</a></li>
                 </ul>
             </div>
             <div class="col-md-3 footer-grid">
                 <ul>
                     <li><a href="login.html">Your Account</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="{% url "portal:contact" %}">Contact Us</a></li>
                     <li><a href="product.html">Store Locator</a></li>
                     <li><a href="pressroom.html">Press Room</a></li>
                 </ul>

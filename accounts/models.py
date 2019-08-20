@@ -6,8 +6,10 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from .validators import phone_number_validator
-
+from products.models import Category
 from .managers import UserManager
+from carts_app.models import Cart
+from django.db.models.signals import post_save
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -43,3 +45,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def get_display_text(self):
         return self.get_full_name if self.get_full_name != " " else self.phone
+    
+    @property
+    def get_category_visiting_cards(self):
+        vs_cards = Category.objects.filter(name__icontains="visiting card")
+        if vs_cards.exists():
+            return vs_cards.first()
+        
+    @property
+    def get_category_pens(self):
+        pens = Category.objects.filter(name__icontains="pens")
+        if pens.exists():
+            return pens.first()
+        return False
+        
+    @property
+    def get_category_identity_cards(self):
+        identity_cards = Category.objects.filter(name__icontains="identity card")
+        if identity_cards.exists():
+            return identity_cards.first()
+
+
+def create_cart(sender, instance, *args, **kwargs):
+    if not instance.is_staff and not instance.is_superuser and not hasattr(instance, "cart"):
+        Cart.objects.create(user=instance)

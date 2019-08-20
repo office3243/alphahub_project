@@ -1,5 +1,5 @@
 {% extends "portal/base.html" %}
-{% block title %}All Pens{% endblock %}
+{% block title %}{{ category.get_display_text }}{% endblock %}
 
 {% block content %}
     <!--product start here-->
@@ -10,6 +10,7 @@
 
                   {% if products %}
                       <div class=" product-menu-bar">
+                        <h2 class="text-center">{{ category.get_display_text }}</h2><br><hr>
                         <div class="col-md-3 prdt-right">
                         <div class="w_sidebar">
                             <section  class="sky-form">
