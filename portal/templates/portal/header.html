@@ -39,7 +39,7 @@
                     <input class="serch" type="text" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}"/>
                 </div>
                 <div class="cart box_1">
-                    <a href="checkout.html">
+                    <a href="{% url "carts:cart_view" %}">
                     <h3>
                         <img src="{% static "portal/images/cart.png" %}" alt=""/>
                         <div class="total">

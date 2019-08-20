@@ -1,0 +1,75 @@
+{% extends "portal/base.html" %}
+{% load static %}
+{% block title %}My Cart{% endblock %}
+{% block extrahead %}
+
+{% endblock %}
+
+
+{% block content %}
+
+    <!--start-ckeckout-->
+        <div class="ckeckout">
+            <div class="container">
+                <div class="ckeckout-top">
+                <div class=" cart-items heading">
+                 <h1>My Cart</h1>
+                    <script>$(document).ready(function(c) {
+                        $('.close1').on('click', function(c){
+                            $('.cart-header').fadeOut('slow', function(c){
+                                $('.cart-header').remove();
+                            });
+                            });
+                        });
+                   </script>
+                <script>$(document).ready(function(c) {
+                        $('.close2').on('click', function(c){
+                            $('.cart-header1').fadeOut('slow', function(c){
+                                $('.cart-header1').remove();
+                            });
+                            });
+                        });
+                   </script>
+                   <script>$(document).ready(function(c) {
+                        $('.close3').on('click', function(c){
+                            $('.cart-header2').fadeOut('slow', function(c){
+                                $('.cart-header2').remove();
+                            });
+                            });
+                        });
+                   </script>
+
+                <div class="in-check" >
+                    <ul class="unit">
+                        <li><span>Item</span></li>
+                        <li><span>Product Name</span></li>
+                        <li><span>Total</span></li>
+                        <li><span>Quantity</span></li>
+                        <li> </li>
+                        <div class="clearfix"> </div>
+                    </ul>
+
+                    {% for item in cart.cartitem_set.all %}
+
+                        <ul class="cart-header simpleCart_shelfItem">
+                            <div class="close1"> </div>
+                                <li>{{ forloop.counter }}</li>
+                                <li class="ring-in"><a href="{{ item.product.get_absolute_url }}" ><img src="{{ item.product.get_base_photo.get_photo_url }}" class="img-responsive" alt=""></a>
+                                </li>
+                                <li><span>{{ item.product.get_display_text }}</span></li>
+                                <li><span class="item_price">{{ item.amount }}</span></li>
+                                <li><span>{{ item.quantity }}</span></li>
+                            <div class="clearfix"> </div>
+                        </ul>
+
+                    {% endfor %}
+
+
+                </div>
+                </div>
+             </div>
+            </div>
+        </div>
+    <!--end-ckeckout-->
+
+{% endblock %}

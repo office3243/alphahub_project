@@ -9,12 +9,12 @@ import uuid
 
 class Cart(models.Model):
 
-    user = models.OneToOneField("accounts.User", on_delete=models.CASCADE)
+    user = models.OneToOneField("accounts.User", on_delete=models.CASCADE, blank=True, null=True)
     uuid = models.UUIDField(default=uuid.uuid4)
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.get_display_text if self.user else self.uuid
+        return self.user.get_display_text if self.user else str(self.uuid)
 
 
 class CartItem(models.Model):
@@ -26,7 +26,11 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} - {} X {} = {}".format(self.product.get_display_text, self.rate.amount, self.quantity, self.amount)
+        return "{} - {} X {} = {}".format(self.product.get_display_text, "" , self.quantity, self.amount)
+
+    @property
+    def get_amount(self):
+        return self.amount if hasattr(self, "amount") else ""
 
     def clean(self):
         if self.product.category.is_rate_qty:
@@ -43,7 +47,7 @@ class CartItem(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        if hasattr(self, "rate"):
+        if self.rate is not None:
             amount = self.quantity * self.rate.per_piece_amount
             print(amount)
             if self.amount != amount:
@@ -58,4 +62,17 @@ def assign_rate(sender, instance, *args, **kwargs):
         instance.save()
 
 
+def assign_amount(sender, instance, *args, **kwargs):
+    if instance.rate is not None:
+        try:
+            amount = instance.quantity * instance.rate.per_piece_amount
+            print(amount)
+            if instance.amount != amount:
+                instance.amount = amount
+                instance.save()
+        except:
+            instance.save()
+
+
 post_save.connect(assign_rate, sender=CartItem)
+post_save.connect(assign_amount, sender=CartItem)

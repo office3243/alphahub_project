@@ -45,17 +45,19 @@
                     {% endfor %}
                     <h6 class="item_price">{{ product.get_display_price }} Per Piece</h6>
                     <p>{{ product.extra_info }}</p>
-                    <h4>Size Charts</h4>
-                    <ul class="bann-btns">
-                        <li><select class="bann-size">
-                            <option value="select your location">Size</option>
-                            <option value="saab">Small</option>
-                            <option value="fiat">Medium</option>
-                            <option value="audi">Large</option>
-                        </select>
-                        </li>
-                        <li><a href="#" class="item_add">Add To Cart</a></li>
-                    </ul>
+{#                    <h4>Size Charts</h4>#}
+{#                    <form action="{% url "carts:item_add" %}" method="post">#}
+{#                        <ul class="bann-btns">#}
+{#                            <li><select class="bann-size">#}
+{#                                {% for rate in  %}#}
+{#                                <option value="saab"></option>#}
+{#                                <option value="fiat">Medium</option>#}
+{#                                <option value="audi">Large</option>#}
+{#                            </select>#}
+{#                            </li>#}
+{#                            <li><input class="item_add" type="submit" value="Add To Cart"></li>#}
+{#                        </ul>#}
+{#                    </form>#}
                 </div>
                <div class="clearfix"> </div>
            </div>

@@ -30,3 +30,12 @@ class ItemAddView(FormView):
         temp_form.instance.cart = get_request_cart(self.request)
         temp_form.save()
         return super().form_valid(temp_form)
+
+
+class CartView(DetailView):
+
+    template_name = "carts_app/cart_view.html"
+    model = Cart
+
+    def get_object(self, queryset=None):
+        return get_request_cart(self.request)

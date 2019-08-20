@@ -8,5 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r"", include("portal.urls", namespace="portal")),
     url(r"^accounts/", include("accounts.urls", namespace="accounts")),
+    url(r"^cart/", include("carts_app.urls", namespace="carts")),
     url(r"^products/", include("products.urls", namespace="products")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
