@@ -5,7 +5,7 @@ from django.core.validators import ValidationError
 from django.shortcuts import get_list_or_404
 from django.http import Http404
 import uuid
-
+from django.urls import reverse_lazy
 
 class Cart(models.Model):
 
@@ -26,11 +26,17 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{} - {} X {} = {}".format(self.product.get_display_text, "" , self.quantity, self.amount)
+        return "{} - {} X {} = {}".format(self.product.get_display_text, self.get_unit_rate, self.quantity, self.amount)
 
     @property
     def get_amount(self):
-        return self.amount if hasattr(self, "amount") else ""
+        return self.amount if hasattr(self, "amount") else "Unknown"
+
+    @property
+    def get_unit_rate(self):
+        if self.rate is not None:
+            return self.rate.per_piece_amount
+        return "Unknown"
 
     def clean(self):
         if self.product.category.is_rate_qty:
@@ -49,10 +55,10 @@ class CartItem(models.Model):
     def save(self, *args, **kwargs):
         if self.rate is not None:
             amount = self.quantity * self.rate.per_piece_amount
-            print(amount)
             if self.amount != amount:
                 self.amount = amount
                 super().save()
+        super().save()
 
 
 def assign_rate(sender, instance, *args, **kwargs):
@@ -66,7 +72,6 @@ def assign_amount(sender, instance, *args, **kwargs):
     if instance.rate is not None:
         try:
             amount = instance.quantity * instance.rate.per_piece_amount
-            print(amount)
             if instance.amount != amount:
                 instance.amount = amount
                 instance.save()

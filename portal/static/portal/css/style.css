@@ -355,9 +355,9 @@ select.bann-size {
     font-family: 'Oswald', sans-serif;
     box-shadow:0px 0px 1px 0px rgba(204, 204, 204, 0.85);
 }
-ul.bann-btns li a {
+ul.bann-btns li a, button, input {
     font-size: 1em;
-    color: #fff;
+    color: #fff!important;
     padding:0.83em 1.3em;
     background:#5c8a8a;
     display: block;
