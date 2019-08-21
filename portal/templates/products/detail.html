@@ -2,18 +2,12 @@
 {% load static %}
 {% block title %}{{ product.get_display_text }}{% endblock %}
 {% block extrahead %}
-    <script src="{% static "portal/js/imagezoom.js" %}"></script>
-    <script>
-        // Can also be used with $(document).ready()
-        $(window).load(function() {
-          $('.flexslider').flexslider({
-            animation: "slide",
-            controlNav: "thumbnails"
-          });
-        });
-</script>
-    <script defer src="{% static "portal/js/jquery.flexslider.js" %}"></script>
-    <link rel="stylesheet" href="{% static "portal/css/flexslider.css" %}" type="text/css" media="screen" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous">
+    </script>
 
 {% endblock %}
 
@@ -52,18 +46,19 @@
                         <ul class="bann-btns">
                             {% if product.category.is_rate_qty %}
                                 <li>
-                                    <select name="quantity" class="bann-size">
+                                    <select id="quantity"  name="quantity" class="bann-size">
                                         {% for rate in product.rate_set.all %}
-                                            <option value={{ rate.quantity }}>{{ rate.amount }} Rs for {{ rate.quantity }}</option>
+                                            <option id="quantity_option"  value={{ rate.quantity }}>{{ rate.quantity }}</option>
                                         {% endfor %}
                                     </select>
                                 </li>
                             {% else %}
-                                <li>Enter Quantity : <input name="quantity" type="number"></li>
+                                <li>Enter Quantity : <input id="quantity" name="quantity" type="number"></li>
                             {% endif %}
 {#                            <li><a  class="item_add">Add To Cart</a></li>#}
                             <li><input class="item_add" type="submit" value="Add To Cart"></li>
                         </ul>
+                        <h4>Amount : <span id="calculated_amount"></span></h4>
                     </form>
                 </div>
                <div class="clearfix"> </div>
@@ -72,5 +67,38 @@
        </div>
     </div>
     <!--single end here-->
+
+
+    <script>
+            var rates_dict = Object({{ rates_dict }});
+            var rates_array = [{% for rate in product.rate_set.all %}{{ rate.quantity }}, {% endfor %}].sort(function compareNumbers(a, b) {return a - b;}).reverse();
+            console.log(rates_dict);
+            console.log(rates_array);
+
+            {% if product.category.is_rate_qty %}
+                $("#calculated_amount").text(rates_dict[document.getElementById("quantity").value]);
+            {% endif %}
+            $("#quantity").change(function a() {
+                if (this.value < rates_array[rates_array.length-1]){
+                    console.log("Less", this.value ,"<" ,rates_array[rates_array.length-1]);
+                    console.log(this.value);
+                    $("#quantity").val(rates_array[rates_array.length-1]);
+                }
+                else{
+
+                }
+                   for (i=0; i < rates_array.length; i++){
+                       console.log(rates_array[i]);
+                       console.log(rates_dict[rates_array[i]]);
+                       if (rates_array[i] <= this.value){
+                           console.log("IF");
+                           $("#calculated_amount").text((rates_dict[rates_array[i]]/rates_array[i])*this.value);
+                           break;
+
+                       }
+                   }
+            });
+
+    </script>
 
 {% endblock %}

@@ -10,8 +10,6 @@ class HomeView(TemplateView):
         context = super().get_context_data()
         categories = Category.objects.all()
         context['categories'] = categories
-        print(self.request)
-        print(self.request.session.session_key)
         return context
 
 

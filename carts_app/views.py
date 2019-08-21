@@ -12,7 +12,20 @@ from django.contrib import messages
 
 def get_request_cart(request):
     if request.user.is_authenticated:
-        cart = Cart.objects.get_or_create(user=request.user)
+        cart = Cart.objects.get_or_create(user=request.user)[0]
+        print(cart)
+        if "cart_uuid" in request.session:
+            try:
+                session_cart = Cart.objects.get(uuid=request.session.get("cart_uuid"))
+                print("Session Cart : ", session_cart)
+                # session_cart.cartitem_set.all().bulk_update(cart=cart)
+                for item in session_cart.cartitem_set.all():
+                    item.cart = cart
+                    item.save()
+                print("Bulk Updated.")
+            except Exception as e:
+                print("Exception : --- ", e)
+                pass
     else:
         if "cart_uuid" in request.session:
             try:

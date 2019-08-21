@@ -7,6 +7,7 @@ from django.http import Http404
 import uuid
 from django.urls import reverse_lazy
 
+
 class Cart(models.Model):
 
     user = models.OneToOneField("accounts.User", on_delete=models.CASCADE, blank=True, null=True)
@@ -14,7 +15,7 @@ class Cart(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.get_display_text if self.user else str(self.uuid)
+        return self.user.phone if self.user else str(self.uuid)
 
 
 class CartItem(models.Model):

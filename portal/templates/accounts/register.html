@@ -8,11 +8,14 @@
             <div class="signin-main">
                 <h1>Sign up</h1>
                 <h2>Informations</h2>
-                <form>
-                    <input type="text" placeholder="Username">
-                    <input type="text" class="no-margin" placeholder="E-mail">
-                    <input type="password" placeholder="Password" required=""/>
-                    <input type="password" class="no-margin" placeholder="Confirm Password" required=""/>
+                <form method="post" action="{% url "accounts:register" %}">
+
+                    {% csrf_token %}
+                        {{ form.as_p }}
+{#                    <input type="text" placeholder="Username">#}
+{#                    <input type="text" class="no-margin" placeholder="E-mail">#}
+{#                    <input type="password" placeholder="Password" required=""/>#}
+{#                    <input type="password" class="no-margin" placeholder="Confirm Password" required=""/>#}
                     <span class="checkbox1">
                      <label class="checkbox"><input type="checkbox" name="" checked=""><i> </i>i agree terms of use and privacy</label>
                    </span>

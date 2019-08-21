@@ -49,7 +49,11 @@
                     <p><a href="javascript:;" class="simpleCart_empty">Empty Cart</a></p>
                 </div>
                 <div class="head-signin">
-                    <h5><a href="{% url "accounts:login" %}"><i class="hd-dign"></i>Log in</a></h5>
+                    {% if user.is_authenticated %}
+                        <h5><a href="{% url "accounts:logout" %}"><i class="hd-dign"></i>Logout</a></h5>
+                    {% else %}
+                        <h5><a href="{% url "accounts:login" %}"><i class="hd-dign"></i>Log in</a></h5>
+                    {% endif %}
                 </div>
                  <div class="clearfix"> </div>
             </div>

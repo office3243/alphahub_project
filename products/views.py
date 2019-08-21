@@ -4,7 +4,7 @@ from .models import Product, Category
 from django_filters.views import FilterView
 from .filters import ProductFilter, PenFilter
 from carts_app.forms import CartItemAddForm
-
+import json
 
 class ProductListView(ListView):
 
@@ -47,5 +47,7 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['cart_item_form'] = CartItemAddForm()
+        context['rates_dict'] = {int(rate.quantity): float(rate.amount) for rate in self.get_object().rate_set.order_by("-quantity")}
+        print(context['rates_dict'])
         return context
 

@@ -3,6 +3,9 @@
 <body>
 
 {% block content %}
+
+
+
     <!--log in start here-->
     <div class="login">
         <div class="container">
@@ -10,9 +13,11 @@
                   <h1>Login</h1>
               <div class="col-md-6 login-left">
                 <h2>Existing User</h2>
-                <form>
-                    <input type="text" placeholder="Username" required="">
-                    <input type="password" placeholder="Password" required="">
+                <form method="post" action="{% url "accounts:login" %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+{#                    <input name="username" type="text" placeholder="Username" required="">#}
+{#                    <input name="password" type="password" placeholder="Password" required="">#}
                     <input type="submit" value="Login">
                 </form>
               </div>
