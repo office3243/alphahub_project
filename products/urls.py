@@ -12,5 +12,5 @@ urlpatterns = [
     url(r"^detail/(?P<slug>[-\w]+)/$", views.ProductDetailView.as_view(), name="detail"),
     # url(r'^visiting_cards/$', views.ProductListFilterView.as_view(), name="visiting_cards"),
     # url(r'^/$', views.PenFilterView.as_view(), name="pens"),
-    # url(r'^identity_cards/$', views.ProductListFilterView.as_view(), name="identity_cards"),
+    # url(r'^id_cards/$', views.ProductListFilterView.as_view(), name="id_cards"),
 ]

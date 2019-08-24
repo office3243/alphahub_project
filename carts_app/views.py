@@ -36,6 +36,7 @@ def get_request_cart(request):
         else:
             cart = Cart.objects.create()
             request.session['cart_uuid'] = str(cart.uuid)
+    cart.save()
     return cart
 
 
@@ -86,12 +87,22 @@ class ItemDeleteView(DeleteView):
     def get_object(self, queryset=None):
         return get_request_cart(self.request)
 
+#
+# def item_delete(request):
+#     if request.method == "POST":
+#         item = get_object_or_404(CartItem, id=request.POST["item_id"], cart=get_request_cart(request))
+#         item.delete()
+#         messages.success(request, "Item Deleted Successfully")
+#         return redirect("carts_app:cart_view")
+#     return redirect("portal:home")
 
-def item_delete(request):
-    if request.method == "POST":
-        item = get_object_or_404(CartItem, id=request.POST["item_id"], cart=get_request_cart(request))
+
+def item_delete(request, item_id):
+    try:
+        item = get_object_or_404(CartItem, id=item_id, cart=get_request_cart(request))
         item.delete()
         messages.success(request, "Item Deleted Successfully")
         return redirect("carts_app:cart_view")
-    return redirect("portal:home")
+    except:
+        return redirect("carts_app:cart_view")
 

@@ -60,10 +60,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return False
         
     @property
-    def get_category_identity_cards(self):
-        identity_cards = Category.objects.filter(name__icontains="identity card")
-        if identity_cards.exists():
-            return identity_cards.first()
+    def get_category_id_cards(self):
+        id_cards = Category.objects.filter(name__icontains="id card")
+        if id_cards.exists():
+            return id_cards.first()
 
 
 def create_cart(sender, instance, *args, **kwargs):

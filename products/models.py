@@ -4,10 +4,12 @@ from django.utils.text import slugify
 from django.db.models.signals import post_save
 from django.urls import reverse_lazy
 from products.validators import validate_nonzero
+from django.db.models import Q, Min, Max
 
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
+    photo = models.ImageField(upload_to="products/categories/", blank=True, null=True)
     is_rate_qty = models.BooleanField(verbose_name="Allow only rate quantities", default=False)
 
     class Meta:
@@ -23,6 +25,21 @@ class Category(models.Model):
     @property
     def get_absolute_url(self):
         return reverse_lazy("products:category_products_list", kwargs={"id": self.id})
+
+    @property
+    def get_starting_price(self):
+        rates = [float(product.rate_set.aggregate(Min("per_piece_amount"))["per_piece_amount__min"]) for product in self.product_set.filter(is_active=True)]
+        rates.sort()
+        if rates:
+            return rates[0]
+        return ""
+
+    @property
+    def get_photo_url(self):
+        if self.photo:
+            return self.photo.url
+        elif self.product_set.exists():
+            return self.product_set.first().get_base_photo.get_photo_url
 
 
 class Rate(models.Model):

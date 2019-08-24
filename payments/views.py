@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -9,26 +9,21 @@ import decimal
 from django.contrib import messages
 from django.contrib.auth import login
 from .models import Payment
+from . import alert_messages
+from orders.models import Order
 
 
-def create_payment(request, recharge):
+def create_payment(request, order_id):
     MERCHANT_KEY = settings.PAYTM_MERCHANT_KEY
     MERCHANT_ID = settings.PAYTM_MERCHANT_ID
     CALLBACK_URL = settings.PAYTM_CALLBACK_URL
-    order_id = Checksum.__id_generator__()
-
-    payment_data = recharge.get_payment_info_dict
-    payment = Payment.objects.initiate_payment(order_id=order_id,
-                                               amount=payment_data.get('amount'),
-                                               product_info=payment_data.get('productinfo'),
-                                               recharge=recharge,
-                                               gateway="PAYTM")
+    order = get_object_or_404(Order, order_id=order_id)
 
     data_dict = {
                 'MID': MERCHANT_ID,
-                'ORDER_ID': order_id,
-                'TXN_AMOUNT': payment_data.get("amount"),
-                'CUST_ID':'print@printmycopy.com',
+                'ORDER_ID': order.order_id,
+                'TXN_AMOUNT': order['amount'],
+                'CUST_ID':'cust@alphahub.in',
                 'INDUSTRY_TYPE_ID':'Retail',
                 'WEBSITE': settings.PAYTM_WEBSITE,
                 'CHANNEL_ID':'WEB',
@@ -36,7 +31,7 @@ def create_payment(request, recharge):
             }
     param_dict = data_dict
     param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(data_dict, MERCHANT_KEY)
-    return render(request,"payments/paytm/payment.html",{'paytmdict':param_dict})
+    return render(request, "payments/paytm/payment.html", {'paytmdict':param_dict})
 
 
 @csrf_exempt
@@ -48,38 +43,28 @@ def response(request):
             data_dict[key] = request.POST[key]
         verify = Checksum.verify_checksum(data_dict, MERCHANT_KEY, data_dict['CHECKSUMHASH'])
         if verify:
-            status = data_dict.get("STATUS")
+            pt_status = data_dict.get("STATUS")
+            status = "SC" if pt_status == "TXN_SUCCESS" else "FL"
             order_id = data_dict.get("ORDERID")
             amount = float(data_dict.get("TXNAMOUNT"))
             txnid = data_dict.get("TXNID")
-            payment = Payment.objects.search_payment_paytm(order_id=order_id, amount=amount)
-            payment.txnid = txnid
-            payment.save()
-            if payment is None:
-                raise Http404("Bad Request ")
-            else:
-                if status == "TXN_SUCCESS":
-                    payment.succeed()
-                    return recharge_succeed(request, payment)
+            payment = Payment.objects.create(order_id=order_id, amount=amount, user=request.user, status=status,
+                                             txnid=txnid)
+            if status == "TXN_SUCCESS":
+                orders = Order.objects.filter(order_id=order_id, amount=amount, user=request.user)
+                if orders.exists():
+                    order = orders.first()
+                    payment.order = order
+                    payment.save()
+                    order.is_payed = True
+                    order.save()
+                    messages.success(request, alert_messages.ORDER_PLACED_MESSAGE)
                 else:
-                    payment.failed()
-                    return recharge_failed(request, payment)
+                    messages.warning(request, "Payment Successfull but Order not Found. Amount will be refunded")
+            else:
+                messages.warning(request, "Payment Failed. Try again.")
+            return redirect("orders:list")
         else:
-            return Http404("Bad Request")
+            return Http404("Payment not verified")
     return Http404("Bad Request")
 
-
-def recharge_succeed(request, payment):
-    if not request.user.is_authenticated:
-        user = payment.recharge.wallet.user
-        login(request, user)
-    messages.success(request, alert_messages.RECHARGE_SUCCEED_MESSAGE)
-    return redirect("wallets:view")
-
-
-def recharge_failed(request, payment):
-    if not request.user.is_authenticated:
-        user = payment.recharge.wallet.user
-        login(request, user)
-    messages.warning(request, alert_messages.RECHARGE_FAILED_MESSAGE)
-    return redirect("wallets:view")

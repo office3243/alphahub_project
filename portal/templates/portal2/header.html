@@ -1,0 +1,64 @@
+{% load static %}
+{% load portal_tags %}
+<div class="header">
+    <div class="container">
+    <div class="header-main">
+        <div class="top-nav">
+            <div class="content white">
+              <nav class="navbar navbar-default" role="navigation">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <div class="navbar-brand logo">
+                            <a href="index.html"><img src="{% static "portal/images/logo1.png" %}" alt=""></a>
+                        </div>
+                    </div>
+                    <!--/.navbar-header-->
+                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                               <li><a href="{% url "portal:home" %}">Home</a></li>
+                               <li><a href="{% url "products:list" %}">All Products</a></li>
+                                <li><a href="{% get_category_url_by_name_contains "visiting card" %}">Visiting Cards</a></li>
+                                <li><a href="{% get_category_url_by_name_contains "pen" %}">Pens</a></li>
+                                <li><a href="{% get_category_url_by_name_contains "id card" %}">id Cards</a></li>
+                            <li><a href="{% url "portal:contact" %}">Contact</a></li>
+                        </ul>
+                    </div>
+                    <!--/.navbar-collapse-->
+                </nav>
+                <!--/.navbar-->
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="search">
+                <div class="search-text">
+                    <input class="serch" type="text" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}"/>
+                </div>
+                <div class="cart box_1">
+                    <a href="{% url "carts:cart_view" %}">
+                    <h3>
+                        <img src="{% static "portal/images/cart.png" %}" alt=""/>
+                        <div class="total">
+                        <span class="simpleCart_total"></span></div>
+                        </h3>
+                    </a>
+                    <p><a href="javascript:;" class="simpleCart_empty">Empty Cart</a></p>
+                </div>
+                <div class="head-signin">
+                    {% if user.is_authenticated %}
+                        <h5><a href="{% url "accounts:logout" %}"><i class="hd-dign"></i>Logout</a></h5>
+                    {% else %}
+                        <h5><a href="{% url "accounts:login" %}"><i class="hd-dign"></i>Log in</a></h5>
+                    {% endif %}
+                </div>
+                 <div class="clearfix"> </div>
+            </div>
+        </div>
+     <div class="clearfix"> </div>
+    </div>
+</div>
+</div>

@@ -1,11 +1,12 @@
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed, post_delete
 from products.validators import validate_nonzero
 from django.core.validators import ValidationError
 from django.shortcuts import get_list_or_404
 from django.http import Http404
 import uuid
 from django.urls import reverse_lazy
+import decimal
 
 
 class Cart(models.Model):
@@ -14,17 +15,40 @@ class Cart(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4)
     updated_on = models.DateTimeField(auto_now=True)
 
+    amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
+
     def __str__(self):
         return self.user.phone if self.user else str(self.uuid)
+
+    def save(self, *args, **kwargs):
+        print("save")
+        amount = decimal.Decimal(0.00)
+        for item in self.cartitem_set.all():
+            amount += item.amount
+        if self.amount != amount:
+            self.amount = amount
+        super().save()
+
+
+# def assign_amount_(sender, instance, action, *args, **kwargs):
+#     amount = 0
+#     for item in instance.cartitem_set.all():
+#         amount += item.amount
+#     if instance.amount != amount:
+#         instance.amount = amount
+#         instance.save()
+#
+#
+# m2m_changed.connect(assign_amount, sender=Cart.)
 
 
 class CartItem(models.Model):
     product = models.ForeignKey("products.Product", models.PROTECT)
     rate = models.ForeignKey("products.Rate", on_delete=models.PROTECT, blank=True, null=True)
     quantity = models.PositiveSmallIntegerField(default=1, validators=[validate_nonzero])
-    amount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
 
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return "{} - {} X {} = {}".format(self.product.get_display_text, self.get_unit_rate, self.quantity, self.amount)
@@ -53,13 +77,10 @@ class CartItem(models.Model):
                     "Minimum allowed quantity is {}".format(qty)
                 )
 
-    def save(self, *args, **kwargs):
-        if self.rate is not None:
-            amount = self.quantity * self.rate.per_piece_amount
-            if self.amount != amount:
-                self.amount = amount
-                super().save()
-        super().save()
+    # def save(self, *args, **kwargs):
+    #     if self.rate is not None and self.amount != 0.00:
+    #         self.cart.save()
+    #         super().save()
 
 
 def assign_rate(sender, instance, *args, **kwargs):
@@ -80,5 +101,15 @@ def assign_amount(sender, instance, *args, **kwargs):
             instance.save()
 
 
+def save_cart(sender, instance, *args, **kwargs):
+    if instance.rate is not None and instance.amount != 0.00:
+        try:
+            instance.cart.save()
+        except:
+            pass
+
+
 post_save.connect(assign_rate, sender=CartItem)
 post_save.connect(assign_amount, sender=CartItem)
+post_save.connect(save_cart, sender=CartItem)
+post_delete.connect(save_cart, sender=CartItem)

@@ -6,7 +6,7 @@ SECRET_KEY = '+qkf6u0n7@xpqt#0_c61pmacz)tk%rgv*65m!-mrb%5s8#ga_c'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*", ]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -107,3 +107,6 @@ PAYTM_MERCHANT_KEY = "xt94GuDiIMz_#84O"
 PAYTM_MERCHANT_ID = "ZIHCDc43188965988448"
 PAYTM_WEBSITE = 'DEFAULT'
 PAYTM_CALLBACK_URL = SITE_DOMAIN_NAKED + "/payments/paytm/response/"
+
+
+API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"
