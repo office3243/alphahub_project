@@ -36,7 +36,6 @@ class Order(models.Model):
     zip_code = models.CharField(max_length=6, blank=True)
     phone = models.CharField(max_length=13, blank=True)
 
-    uuid = models.UUIDField(default=uuid.uuid4)
     created_on = models.DateTimeField(auto_now_add=True)
 
     status = models.CharField(max_length=2, choices=ORDER_STATUS_CHOICES, default="PL")

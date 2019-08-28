@@ -6,7 +6,7 @@
 </head>
 <body>
 
-    <h1>ORDER ID : {{ order.uuid }}</h1>
+    <h1>ORDER ID : {{ order.order_id }}</h1>
 
     {% for item in order.items.all %}
         <h4>{{ item.product.get_display_text }}: {{ item.amount }}</h4>

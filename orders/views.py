@@ -50,8 +50,8 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 
     model = Order
     template_name = "orders/detail.html"
-    slug_url_kwarg = "uuid"
-    slug_field = "uuid"
+    slug_url_kwarg = "order_id"
+    slug_field = "order_id"
 
     def get_object(self, queryset=None):
         order = super().get_object()

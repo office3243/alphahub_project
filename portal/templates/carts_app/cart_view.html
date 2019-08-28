@@ -5,7 +5,7 @@
 
     {% if cart.cartitem_set.exists %}
         <form class="bg0 p-t-75 p-b-85" method="post" action="{% url "orders:place" %}">
-    {% csrf_token    %}
+        {% csrf_token %}
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
