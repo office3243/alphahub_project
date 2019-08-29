@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from carts_app.views import get_request_cart
-from .models import Order, Address
+from .models import Order
 from django.views.generic import DetailView, ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -9,13 +9,6 @@ from .forms import OrderPlaceForm
 import random
 import string
 import decimal
-
-
-def order_id_generator(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
-    random_id = ''.join(random.choice(chars) for _ in range(size))
-    if not Order.objects.filter(order_id=random_id).exists():
-        return random_id
-    return order_id_generator()
 
 
 @login_required
@@ -31,6 +24,7 @@ def place(request):
                 item.cart = None
                 item.save()
             order.save()
+            print(order.items.all())
             return redirect(order.get_absolute_url)
     return redirect("carts_app:cart_view")
 
@@ -50,11 +44,12 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 
     model = Order
     template_name = "orders/detail.html"
-    slug_url_kwarg = "order_id"
-    slug_field = "order_id"
+    slug_url_kwarg = "pk"
+    slug_field = "pk"
 
     def get_object(self, queryset=None):
         order = super().get_object()
+        order.save()
         if order.user == self.request.user:
             return order
         else:
@@ -65,12 +60,10 @@ class OrderListView(LoginRequiredMixin, ListView):
 
     model = Order
     template_name = "orders/list.html"
+    context_object_name = "orders"
+    ordering = "-created_on"
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user)
 
-#
-# def payment_make(request, order_id):
-#     order = get_object_or_404(Order, order_id=order_id, user=request.user)
-#

@@ -8,7 +8,7 @@ class Payment(models.Model):
 
     order = models.OneToOneField("orders.Order", on_delete=models.CASCADE)
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
-    order_id = models.CharField(max_length=32)
+    payment_order_id = models.CharField(max_length=32)
     txnid = models.CharField(max_length=200)
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -16,4 +16,4 @@ class Payment(models.Model):
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default="IN")
 
     def __str__(self):
-        return "{} -- {} -- {}".format(self.user.phone, self.amount, self.order_id)
+        return "{} -- {} -- {}".format(self.user.phone, self.amount, self.payment_order_id)

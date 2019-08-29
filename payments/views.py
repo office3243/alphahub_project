@@ -13,16 +13,16 @@ from . import alert_messages
 from orders.models import Order
 
 
-def create_payment(request, order_id):
+def create_payment(request, txn_id):
     MERCHANT_KEY = settings.PAYTM_MERCHANT_KEY
     MERCHANT_ID = settings.PAYTM_MERCHANT_ID
     CALLBACK_URL = settings.PAYTM_CALLBACK_URL
-    order = get_object_or_404(Order, order_id=order_id)
+    order = get_object_or_404(Order, txn_id=txn_id)
 
     data_dict = {
                 'MID': MERCHANT_ID,
-                'ORDER_ID': order.order_id,
-                'TXN_AMOUNT': order['amount'],
+                'ORDER_ID': order.txn_id,
+                'TXN_AMOUNT': order.total_amount,
                 'CUST_ID':'cust@alphahub.in',
                 'INDUSTRY_TYPE_ID':'Retail',
                 'WEBSITE': settings.PAYTM_WEBSITE,
@@ -48,21 +48,24 @@ def response(request):
             order_id = data_dict.get("ORDERID")
             amount = float(data_dict.get("TXNAMOUNT"))
             txnid = data_dict.get("TXNID")
-            payment = Payment.objects.create(order_id=order_id, amount=amount, user=request.user, status=status,
+            payment = Payment.objects.create(payment_order_id=order_id, amount=amount, user=request.user, status=status,
                                              txnid=txnid)
-            if status == "TXN_SUCCESS":
-                orders = Order.objects.filter(order_id=order_id, amount=amount, user=request.user)
-                if orders.exists():
-                    order = orders.first()
+            orders = Order.objects.filter(txn_id=order_id, amount=amount, user=request.user)
+            if orders.exists():
+                order = orders.first()
+                if status == "TXN_SUCCESS":
                     payment.order = order
                     payment.save()
                     order.is_payed = True
                     order.save()
                     messages.success(request, alert_messages.ORDER_PLACED_MESSAGE)
+                    return redirect(order.get_absolute_url)
                 else:
-                    messages.warning(request, "Payment Successfull but Order not Found. Amount will be refunded")
+                    messages.warning(request, "Payment Failed. Try again.")
+                    return redirect(order.get_absolute_url)
             else:
-                messages.warning(request, "Payment Failed. Try again.")
+                messages.warning(request, "Payment Successfull but Order not Found. Amount will be refunded")
+
             return redirect("orders:list")
         else:
             return Http404("Payment not verified")

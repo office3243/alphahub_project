@@ -48,6 +48,11 @@ class ProductDetailView(DetailView):
         context = super().get_context_data()
         context['cart_item_form'] = CartItemAddForm()
         context['rates_dict'] = {int(rate.quantity): round(float(rate.amount), 2) for rate in self.get_object().rate_set.order_by("-quantity")}
-        print(context['rates_dict'])
         return context
 
+
+class CategoryListView(ListView):
+
+    model = Category
+    template_name = "products/category_list.html"
+    context_object_name = "categories"

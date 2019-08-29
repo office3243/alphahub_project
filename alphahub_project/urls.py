@@ -11,4 +11,5 @@ urlpatterns = [
     url(r"^cart/", include("carts_app.urls", namespace="carts")),
     url(r"^products/", include("products.urls", namespace="products")),
     url(r"^orders/", include("orders.urls", namespace="orders")),
+    url(r"^payments/", include("payments.urls", namespace="payments")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

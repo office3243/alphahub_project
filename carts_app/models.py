@@ -21,7 +21,6 @@ class Cart(models.Model):
         return self.user.phone if self.user else str(self.uuid)
 
     def save(self, *args, **kwargs):
-        print("save")
         amount = decimal.Decimal(0.00)
         for item in self.cartitem_set.all():
             amount += item.amount

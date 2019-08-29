@@ -14,7 +14,7 @@
 							<table class="table-shopping-cart">
 								<tr class="table_head">
 									<th class="column-1">Product</th>
-									<th class="column-2"></th>
+									<th class="column-2">Name</th>
 									<th class="column-3">Price</th>
 									<th class="column-4">Quantity</th>
 									<th class="column-5">Delete</th>
@@ -39,9 +39,12 @@
 						</div>
 
 						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-							<div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-								Update Cart
-							</div>
+							<a href="{% url "accounts:login" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+								Login
+							</a>
+                            <a href="{% url "accounts:register" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+								Create New Account
+							</a>
 						</div>
 					</div>
 				</div>
@@ -136,9 +139,15 @@
 			</div>
 		</div>
 	</form>
+
+        <h1><a href="{% url "accounts:login" %}?next{{ request.path }}">Do Login</a></h1>
+
     {% else %}
-        <br><br><br><br>
-        <span class="alert alert-warning btn-block">Cart is Empty</span>
+{#        <br><br><br><br>#}
+        <div class="jumbotron bg-white container">
+        <span class="alert alert-warning btn-block">Cart is Empty <a href="{% url "products:category_list" %}">Shop Now</a></span>
+
+        </div>
     {% endif %}
 
 {% endblock %}

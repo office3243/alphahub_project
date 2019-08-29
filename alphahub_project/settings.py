@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "portal",
     "carts_app",
     "django_filters",
+    "payments",
 ]
 
 MIDDLEWARE = [
