@@ -4,11 +4,10 @@ from .models import Order
 from django.views.generic import DetailView, ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
 from .forms import OrderPlaceForm
-import random
-import string
-import decimal
+import os
+from django.conf import settings
+from django.http import HttpResponse, Http404
 
 
 @login_required
@@ -25,7 +24,7 @@ def place(request):
                 item.save()
             order.save()
             print(order.items.all())
-            return redirect(order.get_absolute_url)
+            return redirect(order.get_create_payment_url)
     return redirect("carts_app:cart_view")
 
 
@@ -67,3 +66,16 @@ class OrderListView(LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         return qs.filter(user=self.request.user)
 
+
+def bill_download(request, txn_id):
+    try:
+        file_path = get_object_or_404(Order, txn_id=txn_id, user=request.user).bill.path
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/pdf")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                return response
+        raise Http404
+    except Exception as e:
+        print(e)
+        raise Http404

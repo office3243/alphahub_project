@@ -1,34 +1,16 @@
 {% extends "portal/base.html" %}
 {% block title %}Login{% endblock %}
-<body>
-
+{% load crispy_forms_tags %}
 {% block content %}
-
-
-
-    <!--log in start here-->
-    <div class="login">
-        <div class="container">
-            <div class="login-main">
-                  <h1>Login</h1>
-              <div class="col-md-6 login-left">
-                <h2>Existing User</h2>
-                <form method="post" action="{% url "accounts:login" %}">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-{#                    <input name="username" type="text" placeholder="Username" required="">#}
-{#                    <input name="password" type="password" placeholder="Password" required="">#}
-                    <input type="submit" value="Login">
-                </form>
-              </div>
-              <div class="col-md-6 login-right">
-                 <h3>New User? Create an Account</h3>
-                 <p>But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system. and expound the actual teachings of the great.</p>
-                 <a href="{% url "accounts:register" %}" class="login-btn">Create an Account </a>
-              </div>
-              <div class="clearfix"> </div>
-            </div>
+    <div class="" style="margin: 50px 10px">
+        <div class="col-lg-8 jumbotron text-white" style="background-color: #717fe0; margin: auto">
+            <h3 class="text-center font-weight-bold">Login</h3>
+            <form action="{% url "accounts:login" %}" method="post">
+{#                <input name="next" value="{% url "carts:cart_view" %}" type="hidden">#}
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input class="btn bg-white" type="submit" value="Login">
+            </form>
         </div>
     </div>
-    <!--log in end here-->
 {% endblock %}

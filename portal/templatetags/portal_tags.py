@@ -13,5 +13,7 @@ def get_category_url_by_name_contains(name):
 
 
 @register.simple_tag
-def get_request_cart(request):
-    return get_request_cart(request)
+def get_request_cart_amount(request):
+    amount = int(get_request_cart(request).amount)
+
+    return amount

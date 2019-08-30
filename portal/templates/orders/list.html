@@ -13,22 +13,31 @@
                         <table class="table-shopping-cart">
                             <tr class="table_head">
                                 <th class="column-1">Order Id</th>
-                                <th class="column-2">Total</th>
-                                <th class="column-3">Date</th>
-                                <th class="column-4">Status</th>
+                                <th class="column-2">Status</th>
+                                <th class="column-3">Amount</th>
+                                <th class="column-4">Date</th>
                                 <th class="column-5">Bill</th>
                             </tr>
                             {% for order in orders %}
                                 <tr class="table_row">
-                                    <td class="column-1"><a href="{{ order.get_absolute_url }}">{{ order.txn_id }}</a></td>
-                                    <td class="column-2">{{ order.total_amount }}</td>
-                                    <td class="column-3">{{ order.get_created_date }}</td>
-                                    <td class="column-4">{{ order.get_status }}</td>
+                                    <td class="column-1"><a href="{{ order.get_absolute_url }}"><u>{{ order.txn_id }}</u></a></td>
+                                    <td class="column-2">
+                                        {% with order.status as status %}
+                                            <span class=" badge badge-{% if status == "SH" %}success{% elif status == "PK"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span>
+                                            {% if status == "NP" %}<a class="btn  btn-primary" href="{{ order.get_create_payment_url }}">Pay</a>{% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    <td class="column-3">{{ order.total_amount }}</td>
+                                    <td class="column-4">{{ order.get_created_date }}</td>
                                     <td class="column-5">
                                         {% if order.bill %}
                                             <a href="{{ order.get_bill_download_link }}"><i class="zmdi zmdi-download"></i></a>
                                         {% else %}
-                                            Not Generated
+                                            {% if order.status == "NP" %}
+                                                <span class="text-danger">Order not placed</span>
+                                            {% else %}
+                                                <span class="text-warning">Will Generate Soon</span>
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                 </tr>

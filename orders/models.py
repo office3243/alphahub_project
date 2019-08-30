@@ -6,7 +6,8 @@ from django.db.models.signals import m2m_changed, post_save
 import random
 import string
 import decimal
-
+import requests
+from django.conf import settings
 
 def txn_id_generator(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
     random_id = ''.join(random.choice(chars) for _ in range(size))
@@ -17,7 +18,7 @@ def txn_id_generator(size=6, chars=string.ascii_uppercase + string.digits + stri
 
 class Order(models.Model):
 
-    ORDER_STATUS_CHOICES = (("PL", "Order Placed"), ("RC", "Received"), ("PK", "Packing"),
+    ORDER_STATUS_CHOICES = (("NP", "Payment Pending"), ("PL", "Order Placed"), ("PK", "Packing"),
                             ("SH", "Shipped"), ("CN", "Cancelled"))
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -27,7 +28,7 @@ class Order(models.Model):
     sub_total = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
     total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
     txn_id = models.CharField(max_length=32, default=txn_id_generator)
-    delivery_expected = models.DateTimeField(blank=True, null=True)
+    delivery_expected = models.DateField(blank=True, null=True)
     bill = models.FileField(upload_to="orders/bills/", blank=True, null=True)
 
     line_1 = models.CharField(max_length=264, blank=True)
@@ -36,9 +37,13 @@ class Order(models.Model):
     zip_code = models.CharField(max_length=6, blank=True)
     phone = models.CharField(max_length=13, blank=True)
 
+    bill_sms_sent = models.BooleanField(default=False)
+    shipped_sms_sent = models.BooleanField(default=False)
+    placed_sms_sent = models.BooleanField(default=False)
+
     created_on = models.DateTimeField(auto_now_add=True)
 
-    status = models.CharField(max_length=2, choices=ORDER_STATUS_CHOICES, default="PL")
+    status = models.CharField(max_length=2, choices=ORDER_STATUS_CHOICES, default="NP")
     is_payed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -51,7 +56,7 @@ class Order(models.Model):
     @property
     def get_delivery_expected(self):
         if self.delivery_expected:
-            return self.delivery_expected.strftime("%d-%m-%Y")
+            return self.delivery_expected.strftime("%d %b, %Y")
         else:
             return "Expected Delivery Date will be informed soon"
 
@@ -61,7 +66,7 @@ class Order(models.Model):
 
     @property
     def get_created_date(self):
-        return self.created_on.strftime("%d-%m-%Y")
+        return self.created_on.strftime("%d %b, %Y")
 
     @property
     def get_status(self):
@@ -70,7 +75,7 @@ class Order(models.Model):
     @property
     def get_bill_download_link(self):
         if self.bill:
-            return "/bill"
+            return reverse_lazy("orders:bill_download", kwargs={"txn_id": self.txn_id})
         else:
             return ""
 
@@ -78,6 +83,51 @@ class Order(models.Model):
     def get_create_payment_url(self):
         return reverse_lazy("payments:paytm_create_payment", kwargs={'txn_id': self.txn_id})
 
+    def send_bill_sms(self):
+        pass
+
+    def send_shipped_sms(self):
+        pass
+
+    def send_placed_sms(self):
+        print("SMS", self.user.phone)
+        message = "Hello {} your order with order id {} has been placed successfully. your order bill and expected dellivery date will be informed to you soon" \
+                  "Thank you.".format(self.user.get_short_name, self.txn_id)
+        url = "http://2factor.in/API/V1/{}/ADDON_SERVICES/SEND/TSMS".format(settings.API_KEY_2FA)
+        print(url)
+        data = {
+            "From": "ALPHAB",
+            "To": str(self.user.phone),
+            "Msg": message,
+            "Template": "Temp1"
+        }
+        response = requests.post(url, data=data)
+        print(response.status_code)
+        print(response.content)
+        if response.status_code == 200:
+            self.placed_sms_sent = True
+            self.save()
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.status == "PL" and not self.placed_sms_sent:
+            self.send_placed_sms()
+        if self.bill and self.delivery_expected and not self.bill_sms_sent:
+            self.send_bill_sms()
+        if self.status == "SH" and not self.shipped_sms_sent:
+            self.send_shipped_sms()
+        return super().save()
+    #
+
+    # def send_sms(self):
+    #         url = "http://2factor.in/API/V1/{API_KEY_2FA}/SMS/{phone}/AUTOGEN/{otp_template}".format(
+    #             API_KEY_2FA=API_KEY_2FA,
+    #             phone=phone, otp_template=otp_template)
+    #         response = requests.request("GET", url)
+    #         data = response.json()
+    #         request.session['user_session_data'] = data['Details']
+    #         return True
+    #
 
 def assign_amount(sender, instance, action, *args, **kwargs):
     sub_total = decimal.Decimal(0.00)

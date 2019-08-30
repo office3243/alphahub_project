@@ -3,17 +3,39 @@
 
 {% block  content %}
     <br><br>
-    <h3 class="text-center"><u>Order : {{ order.txn_id }}</u></h3>
+    <h3 class="text-center">
+        <u>Order : {{ order.txn_id }}<br><br>
+            {% with order.status as status %}
+                <span class="badge badge-{% if status == "SH" %}success{% elif status == "PK"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span></u>
+                {% if status == "NP" %}<a class="btn btn-primary" href="{{ order.get_create_payment_url }}">Pay Now</a>{% endif %}
+            {% endwith %}
+    </h3>
     <br><br>
     <div class="container font-weight-bold">
         <ul class="list-group">
-          <li class="list-group-item">Date :  <span class="float-right">{{ order.get_created_date }}</span> </li>
-          <li class="list-group-item">Total Amount :  <span class="float-right">{{ order.sub_total }} + {{ order.shipping_charges }} (Shipping) = {{ order.total_amount }}</span> </li>
-          <li class="list-group-item">Expected Delivery :  <span class="float-right">{{ order.get_delivery_expected }}</span> </li>
-          <li class="list-group-item">Contact :  <span class="float-right">{{ order.phone }}</span> </li>
-          <li class="list-group-item">Paymeny :  <span class="float-right">{% if order.is_payed %}Payed{% else %}Not Payed.  <a href="{{ order.get_create_payment_url }}">Pay Now!</a>{% endif %}</span> </li>
-          <li class="list-group-item">Address :  <span class="float-right">{{ order.get_address_text }}</span></li>
-          <li class="list-group-item">Bill :  <span class="float-right">{% if order.bill %}<a href="{{ order.get_bill_download_link }}"><i class="zmdi-download"></i></a>{% else %}Will Generate Soon{% endif %}</span></li>
+            <li class="list-group-item">Date :  <span class="float-right">{{ order.get_created_date }}</span></li>
+            <li class="list-group-item">Total Amount :  <span class="float-right">{{ order.sub_total }} + {{ order.shipping_charges }} (Shipping) = {{ order.total_amount }}</span> </li>
+            <li class="list-group-item">Expected Delivery :  <span class="float-right{% if not order.delivery_expected %} text-warning{% endif %}">{{ order.get_delivery_expected }}</span> </li>
+            <li class="list-group-item">Contact :  <span class="float-right">{{ order.phone }}</span> </li>
+            <li class="list-group-item">Payment :
+                {% if order.is_payed %}
+                        <span class="float-right text-success">Payment Done</span>
+                {% else %}
+                        <span class="float-right text-danger">Payment not Done
+                            <a class="btn btn-primary" href="{{ order.get_create_payment_url }}">Pay Now!</a>
+                        </span>
+                {% endif %}
+            </li>
+            <li class="list-group-item">Address :  <span class="float-right">{{ order.get_address_text }}</span></li>
+            <li class="list-group-item">Bill :
+                <span class="float-right">
+                    {% if order.bill %}
+                        <a href="{{ order.get_bill_download_link }}"><i class="zmdi zmdi-download"></i></a>
+                    {% else %}
+                        <span class="text-warning">Will Generate Soon</span>
+                    {% endif %}
+                </span>
+            </li>
         </ul>
     </div>
     <br><br>

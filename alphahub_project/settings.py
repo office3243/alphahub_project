@@ -16,6 +16,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'crispy_forms',
+
     "accounts",
     "orders",
     "products",
@@ -99,15 +101,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 #   CUSTOM SETTINGS
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "/login/"
+LOGIN_URL = "/accounts/login/"
 SITE_DOMAIN_NAKED = "http://127.0.0.1:8000"
 
 
 #   PAYTM
-PAYTM_MERCHANT_KEY = "xt94GuDiIMz_#84O"
-PAYTM_MERCHANT_ID = "ZIHCDc43188965988448"
+PAYTM_MERCHANT_KEY = "mhTAUyOuhW752G_q"
+PAYTM_MERCHANT_ID = "VgBKhn41304614600778"
 PAYTM_WEBSITE = 'DEFAULT'
 PAYTM_CALLBACK_URL = SITE_DOMAIN_NAKED + "/payments/paytm/response/"
 
 
 API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
