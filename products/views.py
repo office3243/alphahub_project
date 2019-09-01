@@ -5,6 +5,7 @@ from django_filters.views import FilterView
 from .filters import ProductFilter, PenFilter
 from carts_app.forms import CartItemAddForm
 import json
+from django.db.models import Q
 
 class ProductListView(ListView):
 
@@ -56,3 +57,13 @@ class CategoryListView(ListView):
     model = Category
     template_name = "products/category_list.html"
     context_object_name = "categories"
+
+
+def search_items(request):
+    if request.method == "POST":
+        value = request.POST['value']
+        products = Product.objects.filter(Q(name__icontains=value) or Q(product_code__icontains=value) or
+                                          Q(specification__value__icontains=value))
+        categories = Category.objects.filter(Q(name__icontains=value))
+        return render(request, 'products/search_list.html', {'products': products, "categories": categories})
+

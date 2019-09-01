@@ -6,7 +6,7 @@
     <h3 class="text-center">
         <u>Order : {{ order.txn_id }}<br><br>
             {% with order.status as status %}
-                <span class="badge badge-{% if status == "SH" %}success{% elif status == "PK"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span></u>
+                <span class="badge badge-{% if status == "SH" %}success{% elif status == "RS"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span></u>
                 {% if status == "NP" %}<a class="btn btn-primary" href="{{ order.get_create_payment_url }}">Pay Now</a>{% endif %}
             {% endwith %}
     </h3>

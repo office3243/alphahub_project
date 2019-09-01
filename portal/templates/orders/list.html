@@ -23,7 +23,7 @@
                                     <td class="column-1"><a href="{{ order.get_absolute_url }}"><u>{{ order.txn_id }}</u></a></td>
                                     <td class="column-2">
                                         {% with order.status as status %}
-                                            <span class=" badge badge-{% if status == "SH" %}success{% elif status == "PK"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span>
+                                            <span class=" badge badge-{% if status == "SH" %}success{% elif status == "RS"%}info{% elif status == "PL" %}primary{% else %}danger{% endif %}" style="margin-left: 10px">{{ order.get_status }}</span>
                                             {% if status == "NP" %}<a class="btn  btn-primary" href="{{ order.get_create_payment_url }}">Pay</a>{% endif %}
                                         {% endwith %}
                                     </td>

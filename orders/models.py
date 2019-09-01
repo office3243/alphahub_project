@@ -8,6 +8,9 @@ import string
 import decimal
 import requests
 from django.conf import settings
+import json
+from django.core.validators import FileExtensionValidator
+
 
 def txn_id_generator(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
     random_id = ''.join(random.choice(chars) for _ in range(size))
@@ -18,7 +21,7 @@ def txn_id_generator(size=6, chars=string.ascii_uppercase + string.digits + stri
 
 class Order(models.Model):
 
-    ORDER_STATUS_CHOICES = (("NP", "Payment Pending"), ("PL", "Order Placed"), ("PK", "Packing"),
+    ORDER_STATUS_CHOICES = (("NP", "Payment Pending"), ("PL", "Order Placed"), ("RS", "Ready To Ship"),
                             ("SH", "Shipped"), ("CN", "Cancelled"))
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,7 +32,8 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0.00)
     txn_id = models.CharField(max_length=32, default=txn_id_generator)
     delivery_expected = models.DateField(blank=True, null=True)
-    bill = models.FileField(upload_to="orders/bills/", blank=True, null=True)
+    bill = models.FileField(upload_to="orders/bills/", blank=True, null=True,
+                            validators=[FileExtensionValidator(allowed_extensions=['pdf', ]), ])
 
     line_1 = models.CharField(max_length=264, blank=True)
     line_2 = models.CharField(max_length=264, blank=True)
@@ -40,6 +44,7 @@ class Order(models.Model):
     bill_sms_sent = models.BooleanField(default=False)
     shipped_sms_sent = models.BooleanField(default=False)
     placed_sms_sent = models.BooleanField(default=False)
+    rs_sms_sent = models.BooleanField(default=False)
 
     created_on = models.DateTimeField(auto_now_add=True)
 
@@ -84,38 +89,74 @@ class Order(models.Model):
         return reverse_lazy("payments:paytm_create_payment", kwargs={'txn_id': self.txn_id})
 
     def send_bill_sms(self):
-        pass
+        url = "http://2factor.in/API/V1/{}/ADDON_SERVICES/SEND/TSMS".format(settings.API_KEY_2FA)
+        data = {
+            "From": "ALPHAH",
+            "To": str(self.user.phone),
+            "TemplateName": "BILL_SMS",
+            "VAR1": str(self.user.get_short_name),
+            "VAR2": str(self.txn_id),
+            "VAR3": str(self.total_amount),
+            "VAR4": str(settings.SITE_DOMAIN) + str(self.get_bill_download_link),
+            "VAR5": str(self.get_delivery_expected),
+            "VAR6": str(settings.SITE_DOMAIN) + str(self.get_absolute_url),
+        }
+        response = requests.post(url, data=data)
+        response_dict = json.loads(response.content)
+        print("BILL SMS : ", response_dict)
+        if response_dict['Status'] == "Success":
+            self.bill_sms_sent = True
+            self.save()
 
     def send_shipped_sms(self):
         pass
 
     def send_placed_sms(self):
-        print("SMS", self.user.phone)
-        message = "Hello {} your order with order id {} has been placed successfully. your order bill and expected dellivery date will be informed to you soon" \
-                  "Thank you.".format(self.user.get_short_name, self.txn_id)
+        print("SEND PLACED SMS")
         url = "http://2factor.in/API/V1/{}/ADDON_SERVICES/SEND/TSMS".format(settings.API_KEY_2FA)
-        print(url)
         data = {
-            "From": "ALPHAB",
+            "From": "ALPHAH",
             "To": str(self.user.phone),
-            "Msg": message,
-            "Template": "Temp1"
+            "TemplateName": "PLACED_SMS",
+            "VAR1": str(self.user.get_short_name),
+            "VAR2": str(self.txn_id),
+            "VAR3": str(self.total_amount),
+            "VAR4": str(settings.SITE_DOMAIN) + str(self.get_absolute_url),
+
         }
         response = requests.post(url, data=data)
-        print(response.status_code)
-        print(response.content)
-        if response.status_code == 200:
+        response_dict = json.loads(response.content)
+        if response_dict['Status'] == "Success":
             self.placed_sms_sent = True
+            self.save()
+
+    def send_rs_sms(self):
+        print("SEND PLACED SMS")
+        url = "http://2factor.in/API/V1/{}/ADDON_SERVICES/SEND/TSMS".format(settings.API_KEY_2FA)
+        data = {
+            "From": "ALPHAH",
+            "To": str(self.user.phone),
+            "TemplateName": "PLACED_SMS",
+            "VAR1": str(self.user.get_short_name),
+            "VAR2": str(self.txn_id),
+            "VAR3": str(self.total_amount),
+            "VAR4": str(settings.SITE_DOMAIN) + str(self.get_absolute_url),
+
+        }
+        response = requests.post(url, data=data)
+        response_dict = json.loads(response.content)
+        if response_dict['Status'] == "Success":
+            self.rs_sms_sent = True
             self.save()
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        if self.status == "PL" and not self.placed_sms_sent:
+        if not self.placed_sms_sent and self.status == "PL":
             self.send_placed_sms()
-        if self.bill and self.delivery_expected and not self.bill_sms_sent:
+        if not self.bill_sms_sent and self.bill and self.delivery_expected:
             self.send_bill_sms()
-        if self.status == "SH" and not self.shipped_sms_sent:
-            self.send_shipped_sms()
+        if not self.rs_sms_sent and self.status == "RS":
+            self.send_rs_sms()
         return super().save()
     #
 

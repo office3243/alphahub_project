@@ -22,11 +22,25 @@
 	<link rel="stylesheet" type="text/css" href="{% static "css/util.css" %}">
 	<link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
 
+            <script>
+               function imgError(image) {
+                   image.onerror = "";
+                   image.src = "{% static "images/image_not_available.jpg" %}";
+                   return true;
+               }
+            </script>
+
     {% block extrahead %}
     {% endblock %}
 
 </head>
 <body class="animsition">
+
+    {% if messages %}
+        {% for message in messages %}
+            <span class="alert alert-{{ message.tags }} btn-block">{{ message    }}</span>
+        {% endfor %}
+    {% endif %}
 
 	<!-- Header -->
     {% include "portal/header.html" %}
@@ -49,8 +63,10 @@
 
     {% block extrascript %}
     {% endblock %}
-
 	<script src="{% static "vendor/jquery/jquery-3.2.1.min.js" %}"></script>
+
+
+
 	<script src="{% static "vendor/animsition/js/animsition.min.js" %}"></script>
 	<script src="{% static "vendor/bootstrap/js/popper.js" %}"></script>
 	<script src="{% static "vendor/bootstrap/js/bootstrap.min.js" %}"></script>

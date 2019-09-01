@@ -15,3 +15,4 @@ class HomeView(TemplateView):
 
 class ContactView(TemplateView):
     template_name = "portal/contact.html"
+

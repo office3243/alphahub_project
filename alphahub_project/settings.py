@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "carts_app",
     "django_filters",
     "payments",
+    "enquiries",
 ]
 
 MIDDLEWARE = [
@@ -102,14 +103,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/accounts/login/"
-SITE_DOMAIN_NAKED = "http://127.0.0.1:8000"
+SITE_DOMAIN = "http://127.0.0.1:8000"
 
 
 #   PAYTM
 PAYTM_MERCHANT_KEY = "mhTAUyOuhW752G_q"
 PAYTM_MERCHANT_ID = "VgBKhn41304614600778"
 PAYTM_WEBSITE = 'DEFAULT'
-PAYTM_CALLBACK_URL = SITE_DOMAIN_NAKED + "/payments/paytm/response/"
+PAYTM_CALLBACK_URL = SITE_DOMAIN + "/payments/paytm/response/"
 
 
 API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"

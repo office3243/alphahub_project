@@ -9,7 +9,8 @@ from django.db.models import Q, Min, Max
 
 class Category(models.Model):
     name = models.CharField(max_length=64)
-    photo = models.ImageField(upload_to="products/categories/", blank=True, null=True)
+    photo = models.ImageField(help_text="Ratio should be 3:2 with 600 X 400 px (maximum)",
+                              upload_to="products/categories/", blank=True, null=True)
     is_rate_qty = models.BooleanField(verbose_name="Allow only rate quantities", default=False)
 
     class Meta:
@@ -78,7 +79,8 @@ post_save.connect(add_per_piece_amount, sender=Rate)
 class Photo(models.Model):
 
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
-    photo = models.ImageField(upload_to="products/photos/")
+    photo = models.ImageField(help_text="Ratio should be 3:2 with 600 X 400 px (maximum)",
+                              upload_to="products/photos/")
     is_base_photo = models.BooleanField(default=False)
 
     def __str__(self):
@@ -127,10 +129,11 @@ class Product(models.Model):
 
     @property
     def get_base_photo(self):
-        photo = self.photo_set.filter(is_base_photo=True).first()
-        if not photo:
-            photo = self.photo_set.first()
-        return photo
+        if self.photo_set.exists():
+            photos = self.photo_set.filter(is_base_photo=True)
+            if photos.exists():
+                return photos.first()
+            return self.photo_set.first()
 
     @property
     def get_display_price(self):

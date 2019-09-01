@@ -30,7 +30,7 @@
                                         <td class="column-3">{{ item.amount }} Rupees</td>
                                         <td class="column-4">{{ item.quantity }}</td>
                                         <td class="column-5">
-                                                    <a href="{% url "carts:item_delete" item_id=item.id %}"><i class="fa fa-trash"></i></a>
+                                                    <a href="{% url "carts:item_delete" item_id=item.id %}"><i class="fa fa-times fa-lg text-danger"></i></a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -38,14 +38,16 @@
 							</table>
 						</div>
 
-						<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-							<a href="{% url "accounts:login" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-								Login
-							</a>
-                            <a href="{% url "accounts:register" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-								Create New Account
-							</a>
-						</div>
+                        {% if not request.user.is_authenticated %}
+                            <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
+                                <a href="{% url "accounts:login" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+                                    Login
+                                </a>
+                                <a href="{% url "accounts:register" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+                                    Create New Account
+                                </a>
+                            </div>
+                        {% endif %}
 					</div>
 				</div>
 
@@ -89,7 +91,7 @@
 								</span>
 							</div>
 
-							<div class="size-209 p-r-18 p-r-0-sm w-full-ssm">
+							<div class="size-209w p-r-18 p-r-0-sm w-full-ssm">
 								<p class="stext-111 cl6 p-t-2">
 									There are no shipping methods available. Please double check your address, or contact us if you need any help.
 								</p>
@@ -126,14 +128,17 @@
 
 							<div class="size-209 p-t-1">
 								<span class="mtext-110 cl2">
-									{{ cart.amount | add:100 }} Rs
+									{{ cart.amount | add:100.00 }} Rs
 								</span>
 							</div>
 						</div>
-
-						<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-							Proceed to Checkout
-						</button>
+                        {% if request.user.is_authenticated %}
+                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+                                Proceed to Checkout
+                            </button>
+                        {% else %}
+                            <span class="text-danger"><a href="{% url "accounts:login" %}">Login</a> / <a href="{% url "accounts:register" %}">Register</a> first to checkout!</span>
+                        {% endif %}
 					</div>
 				</div>
 			</div>

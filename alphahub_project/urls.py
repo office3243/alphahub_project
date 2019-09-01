@@ -12,4 +12,5 @@ urlpatterns = [
     url(r"^products/", include("products.urls", namespace="products")),
     url(r"^orders/", include("orders.urls", namespace="orders")),
     url(r"^payments/", include("payments.urls", namespace="payments")),
+    url(r"^enquiries/", include("enquiries.urls", namespace="enquiries")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
