@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import EnquiryAddForm
 from django.contrib import messages
 
@@ -12,4 +12,4 @@ def add_enquiry(request):
                 form.user = request.user
             form.save()
             messages.success(request, "Your enquiry has been recieved. We will reply you within 4 hours.")
-    return render(request, "portal/contact.html")
+    return redirect("portal:contact")

@@ -44,35 +44,26 @@
 				</div>
 
 				<div class="col-md-6 col-lg-5 p-b-30">
-					<div class="p-r-50 p-t-5 p-lr-0-lg">
-						<h4 class="mtext-105 cl2 js-name-detail p-b-14">
+					<div class="p-r-50 p-t-5 p-lr-0-lg " >
+						<h4 class="mtext-105 js-name-detail p-b-14 cl2 font-weight-bold">
 							{{ product.get_display_text }}
 						</h4>
 
-						<span class="mtext-106 cl2">
-							{{ product.get_display_price }}
+						<span class="mtext-106">
+                            <span >Price : </span>{{ product.get_display_price }}
 						</span>
                         <br>
-                        <span class="mtext-106 cl2">
-							{{ product.product_code }}
+                        <span class="mtext-106">
+							Product Code : {{ product.product_code }}
 						</span>
 
 						<p class="stext-102 cl3 p-t-23">
 							{{ product.headline }}
 						</p>
+                        <hr>
 
 						<!--  -->
-						<div class="p-t-33">
-
-{#                            <div class="float-left">#}
-{#                                <h4>Amount : <span id="calculated_amount"></span>Rs</h4>#}
-{#                            </div>#}
-{#                            <br><br>#}
-{#                            <div class="clearfix"></div>#}
-
-
-                            <h4>Amount : <span id="calculated_amount" class="round_int"></span> Rs</h4>
-
+						<div class="jumbotron" style="height: fit-content!important;">
                             <form method="post" action="{% url "carts_app:item_add" %}" id="add-form" onchange="temp();">
                                 {% csrf_token %}
                                 <input value="{{ product.id }}" name="product_id" type="hidden">
@@ -80,8 +71,8 @@
                                 {% if product.category.is_rate_qty %}
 
                                     <div class="flex-w flex-r-m p-b-10">
-                                        <div class="size-203 flex-c-m respon6">
-                                            Size
+                                        <div class="size-203 flex-c-m respon6 font-weight-bold">
+                                            Select Quantity
                                         </div>
 
                                         <div class="size-204 respon6-next">
@@ -112,16 +103,25 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 {% endif %}
-                                <div class="float-right">
-                                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
-                                        Add to cart
-                                    </button>
+
+                                <br>
+                                <div class="btn text-white font-weight-bold btn-block" style="background-color: #0eb493">
+                                    <h4>Amount : <span id="calculated_amount" class="round_int"></span> Rs</h4>
+                                </div>
+                                <br><br>
+                                <div class="container">
+
+                                    <div class="float-right">
+                                        <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                            Add to cart
+                                        </button>
+                                    </div>
                                 </div>
 
 
                             </form>
-
 						</div>
 
 

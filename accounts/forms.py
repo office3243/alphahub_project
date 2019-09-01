@@ -9,11 +9,11 @@ USER_MODEL = User
 
 
 class CustomLoginForm(AuthenticationForm):
-    username = forms.CharField(max_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd"}))
+    username = forms.CharField(max_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd", "placeholder": "+91987654321"}))
 
 
 class RegisterForm(UserCreationForm):
-    phone = forms.CharField(max_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd"}))
+    phone = forms.CharField(max_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd", "placeholder": "+91987654321"}))
 
     class Meta:
         model = User
@@ -22,7 +22,7 @@ class RegisterForm(UserCreationForm):
 
 class PasswordResetForm(forms.Form):
 
-    phone = forms.CharField(max_length=13, min_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd"}))
+    phone = forms.CharField(max_length=13, min_length=13, widget=forms.TextInput(attrs={"class": "input-medium bfh-phone", "data-format": "+91dddddddddd", "placeholder": "+91987654321"}))
 
     class Meta:
         fields = ('phone', )

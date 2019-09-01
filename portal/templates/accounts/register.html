@@ -3,13 +3,15 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <div class="" style="margin: 50px 10px">
-        <div class="col-lg-8 jumbotron text-white" style="background-color: black; margin: auto">
+        <div class="col-lg-8 jumbotron text-white" style="background-color: #0eb493; margin: auto">
             <h3 class="text-center font-weight-bold">Register</h3>
             <form action="{% url "accounts:register" %}" method="post">
                 {% csrf_token %}
                 {{ form|crispy }}
                 <input class="btn bg-white" type="submit" value="Register">
             </form>
+            <br>
+            <span class="float-right font-weight-bold">Already have an account! <a href="{% url "accounts:login" %}">Login</a></span>
         </div>
     </div>
 {% endblock %}

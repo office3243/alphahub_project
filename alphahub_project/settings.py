@@ -116,3 +116,14 @@ PAYTM_CALLBACK_URL = SITE_DOMAIN + "/payments/paytm/response/"
 API_KEY_2FA = "c9ef2a2e-806a-11e9-ade6-0200cd936042"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'webalphahub@gmail.com'
+EMAIL_HOST_PASSWORD = 'Abdul1996@'
+
+EMAIL_FROM = EMAIL_HOST_USER
+ADMIN_EMAIL = EMAIL_HOST_USER

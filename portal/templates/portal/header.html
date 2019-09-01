@@ -43,25 +43,25 @@
 					<!-- Menu desktop -->
 					<div class="menu-desktop">
 						<ul class="main-menu">
-							<li class="active-menu">
+							<li id="home-tab">
 								<a href="{% url "portal:home" %}">Home</a>
 							</li>
 
-							<li>
+							<li id="categories-tab">
 								<a href="{% url "products:category_list" %}">All Categories</a>
 							</li>
 
-							<li class="label1" data-label1="hot">
+							<li id="vc-tab">
 								<a href="{% get_category_url_by_name_contains "visiting card" %}">Visiting Cards</a>
 							</li>
-                            <li >
+                            <li id="pn-tab">
 								<a href="{% get_category_url_by_name_contains "pens" %}">Pens</a>
 							</li>
-                            <li class="label1" data-label1="hot">
+                            <li id="id-tab">
 								<a href="{% get_category_url_by_name_contains "id card" %}">id Cards</a>
 							</li>
 
-							<li>
+							<li id="contact-tab">
 								<a href="{% url "portal:contact" %}">Contact</a>
 							</li>
 						</ul>
@@ -159,13 +159,13 @@
                     <a href="{% url "products:category_list" %}">All Categories</a>
                 </li>
 
-                <li class="label1" data-label1="hot">
+                <li>
                     <a href="{% get_category_url_by_name_contains "visiting card" %}">Visiting Cards</a>
                 </li>
                 <li >
                     <a href="{% get_category_url_by_name_contains "pens" %}">Pens</a>
                 </li>
-                <li class="label1" data-label1="hot">
+                <li>
                     <a href="{% get_category_url_by_name_contains "id card" %}">id Cards</a>
                 </li>
 				<li>
@@ -192,3 +192,25 @@
 			</div>
 		</div>
 	</header>
+
+    <script type="text/javascript">
+        var current_url_path = "{{ request.path }}";
+        if (current_url_path === '{% url "portal:home" %}'){
+            $("#home-tab").addClass("active-menu");
+            console.log(555);
+        }
+        else if (current_url_path === '{% url "products:category_list" %}'){
+            $("#categories-tab").addClass("active-menu");
+        }
+        else if (current_url_path === '{% url "portal:contact" %}'){
+            $("#contact-tab").addClass("active-menu");
+        }
+        else if (current_url_path === '{% get_category_url_by_name_contains "Visiting Card" %}'){
+            $("#vc-tab").addClass("active-menu");
+        }
+        else if (current_url_path === '{% get_category_url_by_name_contains "Pen" %}'){
+            $("#pn-tab").addClass("active-menu");
+        }        else if (current_url_path === '{% get_category_url_by_name_contains "Identity Card" %}'){
+            $("#id-tab").addClass("active-menu");
+        }
+    </script>
