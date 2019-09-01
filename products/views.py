@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DeleteView, DetailView
 from .models import Product, Category
 from django_filters.views import FilterView
@@ -6,6 +6,7 @@ from .filters import ProductFilter, PenFilter
 from carts_app.forms import CartItemAddForm
 import json
 from django.db.models import Q
+
 
 class ProductListView(ListView):
 
@@ -62,8 +63,10 @@ class CategoryListView(ListView):
 def search_items(request):
     if request.method == "POST":
         value = request.POST['value']
-        products = Product.objects.filter(Q(name__icontains=value) or Q(product_code__icontains=value) or
-                                          Q(specification__value__icontains=value))
-        categories = Category.objects.filter(Q(name__icontains=value))
+        products = Product.objects.filter(Q(name__icontains=value) | Q(product_code__icontains=value) |
+                                          Q(specification__value__icontains=value)).distinct()
+        categories = Category.objects.filter(Q(name__icontains=value)).distinct()
+        print(value, products, categories)
         return render(request, 'products/search_list.html', {'products': products, "categories": categories})
+    return redirect("products:category_list")
 

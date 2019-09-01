@@ -12,7 +12,8 @@
 				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
 					<div class="m-l-25 m-r--38 m-lr-0-xl">
 						<div class="wrap-table-shopping-cart">
-							<table class="table-shopping-cart">
+                            <div class="table-responsive">
+                                <table class="table-shopping-cart">
 								<tr class="table_head">
 									<th class="column-1">Product</th>
 									<th class="column-2">Name</th>
@@ -37,10 +38,13 @@
                                 {% endfor %}
 
 							</table>
+                            </div>
 						</div>
 
                         {% if not request.user.is_authenticated %}
                             <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
+                                <span class="font-weight-bold text-danger">You need to login first to place an order!</span>
+
                                 <a href="{% url "accounts:login" %}" class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
                                     Login
                                 </a>

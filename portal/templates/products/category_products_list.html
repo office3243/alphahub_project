@@ -12,25 +12,25 @@
 						All Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
-					</button>
+                    {% if category.name == "Visiting Cards" %}
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
-					</button>
+                        <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".ivory">
+                            Ivory
+                        </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
-					</button>
+                        <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".rigid">
+                            Rigid
+                        </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
+                        <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".hard">
+                            Hard
+                        </button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
-					</button>
+                        <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".waterproof">
+                            Waterproof
+                        </button>
+                    {% endif %}
+
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
@@ -38,12 +38,6 @@
 						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						 Filter
-					</div>
-
-					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
-						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
-						<i class="icon-close-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-						Search
 					</div>
 				</div>
 
@@ -54,69 +48,56 @@
 							<i class="zmdi zmdi-search"></i>
 						</button>
 
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15" id="search-input" type="text" name="search-value" placeholder="Search">
 					</div>
 				</div>
 
 				<!-- Filter -->
 				<div class="dis-none panel-filter w-full p-t-10">
-					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
-						<div class="filter-col1 p-r-15 p-b-27">
-							<div class="mtext-102 cl2 p-b-15">
-								Sort By
-							</div>
+                    <div class="jumbotron container">
+                        <form class="form" id="product-filter">
+                            {% if category.name == "Visiting Cards" %}
+                                <div class="row">
+                                    <div class="form-group col-lg-3">
+                                        <select id="paper-type" name="paper-type" class="form-control">
+                                            <option value="filterable-product">Select Paper Type</option>
+                                            <option value="paper-type__ivory">Ivory</option>
+                                            <option value="paper-type__rigid">Rigid</option>
+                                            <option value="paper-type__hard">Hard</option>
+                                            <option value="paper-type__waterproof">Waterproof</option>
+                                        </select>
+                                    </div>
 
-							<ul>
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Default
-									</a>
-								</li>
+                                    <div class="form-group col-lg-3">
+                                        <select id="double-side" name="double-side" class="form-control">
+                                            <option value="filterable-product">Select Double Side</option>
+                                            <option value="double-side__yes">Yes</option>
+                                            <option value="double-side__no">No</option>
+                                        </select>
+                                    </div>
 
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Popularity
-									</a>
-								</li>
+                                    <div class="form-group col-lg-3">
+                                        <select id="lamination" name="lamination" class="form-control">
+                                            <option value="filterable-product">Select Lamination</option>
+                                            <option value="lamination__yes">Yes</option>
+                                            <option value="lamination__no">No</option>
+                                        </select>
+                                    </div>
 
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Average rating
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04 filter-link-active">
-										Newness
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Price: Low to High
-									</a>
-								</li>
-
-								<li class="p-b-6">
-									<a href="#" class="filter-link stext-106 trans-04">
-										Price: High to Low
-									</a>
-								</li>
-							</ul>
-						</div>
-
-					</div>
+                                </div>
+                            {% endif %}
+                            <button type="button" class="btn text-white font-weight-bold float-right" style="background-color: #0eb493!important;" onclick="filter_products();">Filter</button>
+                        </form>
+                        <br><br>
+                    </div>
 				</div>
+
 			</div>
 
-            <div class="container jumbotron">
-                <form class="form">
-                </form>
-            </div>
 
 			<div class="row isotope-grid">
                 {% for product in products %}
-				    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+				    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item filterable-product {{ product.get_paper_type }} {{ product.product_code }} {{ product.name }} {% for spec in product.specification_set.all %}{{ spec.get_html_filter_class_name }} {% endfor %}">
                         <div class="block2">
                             <div class="block2-pic hov-img0">
                                 <img onerror="imgError(this);" src="{{ product.get_base_photo.get_photo_url }}" alt="IMG-PRODUCT">
@@ -143,5 +124,41 @@
 			</div>
 		</div>
 	</div>
+
+    <script>
+        function filter_products() {
+            var products = $('.filterable-product');
+            var query = Array();
+            $("form#product-filter :input").each(function () {
+                if ($(this).val()){
+                    q = $(this).val();
+                    query.push(q);
+                }
+            });
+            console.log(query);
+
+            products.each(function () {
+                var result = false;
+                console.log($(this).attr("class"));
+                for (que in query){
+                    if ($(this).hasClass(query[que])){
+                        result = true;
+                    }
+                    else{
+                        result = false;
+                        break;
+                    }
+                }
+                console.log(result);
+                if (result===true){
+                    $(this).show();
+                }
+                else {
+                    $(this).hide();
+                }
+            });
+        }
+
+    </script>
 
 {% endblock %}

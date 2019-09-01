@@ -4,7 +4,7 @@ from django.utils.text import slugify
 from django.db.models.signals import post_save
 from django.urls import reverse_lazy
 from products.validators import validate_nonzero
-from django.db.models import Q, Min, Max
+from django.db.models import Q, Min, Max, Sum
 
 
 class Category(models.Model):
@@ -41,6 +41,25 @@ class Category(models.Model):
             return self.photo.url
         elif self.product_set.exists():
             return self.product_set.first().get_base_photo.get_photo_url
+
+    # @property
+    # def get_specification_values(self):
+    #     a = set()
+    #     for product in self.product_set.filter(is_active=True):
+    #         for s in product.specification_set.all():
+    #             a.add(s.name.title())
+    #     print(a)
+    #     return a
+    #
+    # @property
+    # def get_specifications(self):
+    #     a = set()
+    #     for product in self.product_set.filter(is_active=True):
+    #         for s in product.specification_set.all():
+    #             print(s, type(s))
+    #             a.add(s)
+    #     print(a)
+    #     return a
 
 
 class Rate(models.Model):
@@ -139,6 +158,14 @@ class Product(models.Model):
     def get_display_price(self):
         return "{} Rs".format(self.rate_set.filter(quantity__lte=1000).order_by("-quantity").first().per_piece_amount)
 
+    @property
+    def get_paper_type(self):
+        if self.category.name == "Visiting Cards":
+            try:
+                return self.specification_set.get(name="Paper Type").value.lower()
+            except Product.DoesNotExist:
+                return ""
+
 
 def add_slug_with_name(sender, instance, *args, **kwargs):
     slug = slugify(instance.name)
@@ -158,5 +185,9 @@ class Specification(models.Model):
 
     def __str__(self):
         return "{} = {}".format(self.name, self.value)
+
+    @property
+    def get_html_filter_class_name (self):
+        return "{}__{}".format(self.name.lower().replace(' ', '-'), self.value.lower().replace(' ', '-'))
 
 

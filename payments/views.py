@@ -103,6 +103,7 @@ def response(request):
                     order.is_payed = True
                     order.status = "PL"
                     order.save()
+                    order.send_email_to_admin()
                     messages.success(request, alert_messages.ORDER_PLACED_MESSAGE)
                     return redirect(order.get_absolute_url)
                 else:
